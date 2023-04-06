@@ -8,62 +8,36 @@ export default function Login({ navigation }) {
     const [hash, onChangePassword] = useState('A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3');
     const [message, setMessage] = useState('');
 
-    // async function save(key, value) {
-    //     await SecureStore.setItemAsync(key, value);
-    //     navigation.navigate('ValidateLogin', { token: "Jhonnathan Ramos" })
-    // }
-    // console.log('handleSubmit called!');
-    // console.log(`username: ${username}, hash: ${hash}`);
-    // async function handleSubmit() {
-    //     try {
-    //         const response = await axios.post('https://localhost:44352/api/Users/logindb', {
-    //             username,
-    //             hash
-    //         }, {
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 'Content-Type': 'application/json-patch+json',
-    //             }
-    //         });
+    async function save(key, value) {
+        await SecureStore.setItemAsync(key, value);
+        navigation.navigate('Home')
+    }
 
-    //         if (!response.status === 200) {
-    //             throw new Error('API error');
-    //         }
-
-    //         const json = response.data;
-    //         setMessage(json.value);
-
-    //         // await SecureStore.setItemAsync('token', json.value);
-
-    //         navigation.navigate('ValidateLogin', { token: json.value })
-    //     } catch (error) {
-    //         setMessage(error.message);
-    //         console.error(error);
-    //     }
-    //     // save("token", "Jhonnathan Ramos")
-    //     // navigation.navigate('ValidateLogin', { token: "Jhonnathan Ramos" })
-
-    // }
     async function handleSubmit() {
-        fetch('https://192.168.1.100:44352/api/Users/logindb', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json-patch+json',
-            },
-            body: JSON.stringify({
-                username: 'manelseg',
-                hash: 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3',
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-            })
-            .catch(error => {
-                console.log(error)
+        try {
+            const response = await axios.post('https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Users/logindb', {
+                username,
+                hash
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json-patch+json',
+                }
             });
 
+            if (!response.status === 200) {
+                throw new Error('API error');
+            }
+
+            const json = response.data;
+            setMessage(json.value);
+
+            save("token", json.value)
+
+        } catch (error) {
+            setMessage(error.message);
+            console.error(error);
+        }
     }
 
     return (

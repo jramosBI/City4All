@@ -1,121 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity, Alert } from 'react-native';
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { View, Text, SectionList, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { NavigationRouteContext } from '@react-navigation/native';
 
-
-const DATA = [
-  {
-    data: [
-      {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      }, {
-        name: 'Jhonnathan Ramos',
-        description: 'Order #2625',
-        image: require('../../assets/src/img/user.jpg'),
-      },
-    ],
-  },
-]
-
-const renderItem = ({ item }) => (
-  <View style={[styles.item, styles.shadowProp]}>
-    <Image source={item.image} style={styles.image} />
-    <View styles={styles.itemInsideContainer}>
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-    </View>
-  </View>
-);
 
 const Order = ({ navigation }) => {
-  return (
-    <>
-      <SectionList
-        sections={DATA}
-        keyExtractor={(item, index) => item + index}
-        renderItem={renderItem} />
-      <View style={styles.viewFlutingBtn}>
-        <TouchableOpacity onPress={() => navigation.navigate('AddOrder')}><Ionicons name={'add-circle'} size={60} color={'#43c1c9'} /></TouchableOpacity>
+  const [deliveries, setDeliveries] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = await SecureStore.getItemAsync('token');
+      const headers = {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await axios.get('https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Deliveries', { headers });
+      setDeliveries(response.data.value);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const fetchData = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    const headers = {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.get('https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Deliveries', { headers });
+    setDeliveries(response.data.value);
+  };
+
+  const groupDeliveries = () => {
+    const groupedData = deliveries.reduce((result, delivery) => {
+      const key = delivery.deliveryStatus;
+      if (!result[key]) {
+        result[key] = [];
+      }
+      result[key].push(delivery);
+      return result;
+    }, {});
+
+    const data = Object.keys(groupedData).map((key) => ({
+      title: key,
+      data: groupedData[key].map((delivery) => ({
+        name: delivery.recipientName,
+        description: delivery.description,
+        shippingCompany: delivery.shippingCompany,
+        image: require('../../assets/src/img/user.jpg'),
+      })),
+    }));
+
+    return data;
+  };
+
+  const renderDeliveryItem = ({ item }) => {
+    return (
+      <View style={styles.item}>
+        <Image style={styles.image} source={item.image} />
+        <View style={styles.itemInsideContainer}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.description}>{item.description}</Text>
+          {/* <Text style={styles.description}>{item.description} - {item.shippingCompany}</Text> */}
+        </View>
       </View>
-    </>
+    );
+  };
+
+  const renderSectionHeader = ({ section }) => {
+    return (
+      <Text style={styles.header}>{section.title}</Text>
+    );
+  };
+
+  const handleAddOrderPress = () => {
+    navigation.navigate('AddOrder');
+  };
+
+  return (
+    <View>
+      <SectionList
+        sections={groupDeliveries()}
+        keyExtractor={(item, index) => item + index}
+        renderItem={renderDeliveryItem}
+        renderSectionHeader={renderSectionHeader}
+      />
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.floatingButton} onPress={handleAddOrderPress}>
+          <Text style={styles.buttonText}>+</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
-
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
@@ -133,25 +118,20 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     marginVertical: 8,
-  }, description: {
+  },
+  description: {
     color: '#43c1c9',
   },
   image: {
     width: 70,
     height: 70,
     marginRight: 16,
-    borderRadius: '50%',
+    borderRadius: 35,
     resizeMode: 'contain',
   },
   name: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  viewFlutingBtn: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    alignSelf: 'flex-end'
   },
   header: {
     fontSize: 18,
@@ -159,6 +139,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     paddingVertical: 8,
     paddingHorizontal: 16,
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#43c1c9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+  },
+  buttonText: {
+    fontSize: 30,
+    color: 'white',
   },
 });
 
