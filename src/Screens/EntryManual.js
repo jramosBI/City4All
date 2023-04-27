@@ -38,7 +38,7 @@ export default function EntryManual({ navigation }) {
             json = response.data;
 
         } catch (error) {
-            alert("This License Plate Alredy Exists")
+            alert("This License Plate Alredy Exists!")
             return;
         }
     }
