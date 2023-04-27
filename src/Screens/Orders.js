@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 8,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
     width: '100%',
     padding: 17,
     shadowColor: '#171717',
@@ -136,11 +136,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   header: {
+    padding: 30,
     fontSize: 18,
     fontWeight: 'bold',
     backgroundColor: '#f2f2f2',
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,

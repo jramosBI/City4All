@@ -43,12 +43,9 @@ export default function Login({ navigation }) {
                 setToken(json.value);
                 save("token", json.value);
                 save("name", username);
-            } else {
-                throw new Error('JSON data is undefined');
             }
         } catch (error) {
             setMessage("Invalid Credentials");
-            console.error(error);
             return;
         } finally {
             setIsLoading(false);
