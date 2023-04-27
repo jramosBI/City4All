@@ -1,44 +1,62 @@
 import React, { useState } from 'react';
-import { Image, Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Button, Alert } from 'react-native'
+import { ActivityIndicator, Image, Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Button, Alert } from 'react-native'
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 export default function Login({ navigation }) {
     const [username, onChangeEmail] = useState('manelseg');
-    const [hash, onChangePassword] = useState('A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3');
+    const [password, onChangePassword] = useState('123');
     const [message, setMessage] = useState('');
+    const [token, setToken] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const hash = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
 
     async function save(key, value) {
         await SecureStore.setItemAsync(key, value);
         navigation.navigate('Home')
     }
-
     async function handleSubmit() {
+        setIsLoading(true);
+        let json;
         try {
-            const response = await axios.post('https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Users/logindb', {
-                username,
-                hash
-            }, {
+            const response = await fetch('https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Users/logindb', {
+                method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json-patch+json',
-                }
+                },
+                body: JSON.stringify({
+                    username,
+                    hash,
+                }),
             });
 
-            if (!response.status === 200) {
+            console.log(response.status);
+
+            if (response.status !== 200) {
                 throw new Error('API error');
             }
 
-            const json = response.data;
-            setMessage(json.value);
-
-            save("token", json.value)
-
+            json = await response.json();
+            if (json) {
+                setToken(json.value);
+                save("token", json.value);
+                save("name", username);
+            } else {
+                throw new Error('JSON data is undefined');
+            }
         } catch (error) {
-            setMessage(error.message);
+            setMessage("Invalid Credentials");
             console.error(error);
+            return;
+        } finally {
+            setIsLoading(false);
         }
     }
+
+
+
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -51,13 +69,13 @@ export default function Login({ navigation }) {
                 style={styles.input}
                 onChangeText={onChangeEmail}
                 value={username}
-                placeholder="Email..."
+                placeholder="Username..."
                 keyboardType="email-address"
             />
             <TextInput
                 style={styles.input}
                 onChangeText={onChangePassword}
-                value={hash}
+                value={password}
                 placeholder="Password..."
                 keyboardType="default"
                 secureTextEntry={true}
@@ -65,8 +83,11 @@ export default function Login({ navigation }) {
             <Pressable style={styles.btn} onPress={handleSubmit}>
                 <Text style={styles.label}>Login</Text>
             </Pressable>
+            {isLoading && (
+                <ActivityIndicator style={styles.loading} size="large" color="#43c1c9" />
+            )}
             {message && (
-                <Text>{message}</Text>
+                <Text style={styles.labelErrorMessage}>{message}</Text>
             )}
             <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text style={styles.btnSignUpText}>Don't have an account yet? Register here!</Text>
@@ -101,5 +122,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: '#43c1c9',
         fontSize: 15,
-    },
+    }, loading: {
+        padding: 20,
+    }, labelErrorMessage: {
+        color: 'red',
+        margin: 15,
+        fontSize: 15,
+    }
 })

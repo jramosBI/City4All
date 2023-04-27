@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 const Order = ({ navigation }) => {
@@ -55,25 +54,28 @@ const Order = ({ navigation }) => {
         name: delivery.recipientName,
         description: delivery.description,
         shippingCompany: delivery.shippingCompany,
-        image: require('../../assets/src/img/user.jpg'),
+        image: require('../../assets/src/img/package.jpg'),
       })),
     }));
-
     return data;
   };
 
   const renderDeliveryItem = ({ item }) => {
+    const navigateToOrder = () => {
+      navigation.navigate('OrderPerId', { orderName: item.name, orderDescription: item.description, shippingCompany: item.shippingCompany });
+    };
+
     return (
-      <View style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={navigateToOrder}>
         <Image style={styles.image} source={item.image} />
         <View style={styles.itemInsideContainer}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.description}>{item.description}</Text>
-          {/* <Text style={styles.description}>{item.description} - {item.shippingCompany}</Text> */}
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
+
 
   const renderSectionHeader = ({ section }) => {
     return (

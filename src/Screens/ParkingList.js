@@ -1,46 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { View, Text, SectionList, Image, StyleSheet, Pressable, TextInput } from 'react-native';
-import { NavigationRouteContext } from '@react-navigation/native';
-
-
-const DATA = [
-    {
-        data: [
-            {
-                name: 'Jhonnathan Ramos',
-                description: 'Order #2625',
-                image: require('../../assets/src/img/user.jpg'),
-            }
-        ],
-    },
-]
-
-const renderItem = ({ item }) => (
-    <View style={styles.item}>
-        <Image source={item.image} style={styles.image} />
-        <View styles={styles.itemInsideContainer}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.description}>{item.description}</Text>
-        </View>
-    </View>
-);
+import { View, Text, SectionList, Image, StyleSheet, Pressable, TextInput, VirtualizedList } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
 const ParkingList = ({ navigation }) => {
+    const [sections, setSections] = useState([]);
+    const [plate, setPlate] = useState('');
+
+    React.useEffect(() => {
+        async function retrieveToken() {
+            const token = await SecureStore.getItemAsync('token');
+
+            const fetchData = () => {
+                fetch(`https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Plates?plate=${plate}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((json) => {
+                        const data = json.value.map((item) => ({
+                            id: item.id,
+                            licensePlate: item.licensePlate,
+                            ownerName: item.ownerName,
+                            ownerContact: item.ownerContact,
+                        }));
+                        const sections = [{ title: 'Plates', data }];
+                        setSections(sections);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            };
+
+            fetchData();
+        }
+        retrieveToken();
+    }, [plate]);
+
     return (
         <>
             <View style={styles.container}>
                 <View style={[styles.card, styles.shadowProp]}>
                     <Text style={styles.header}>List</Text>
                     <View style={styles.cardContainer}>
-                    <Text style={styles.labelInput}>Search</Text>
-                        <TextInput style={styles.input}></TextInput>
-                        <Pressable onPress={() => navigation.navigate('ParkingList')} style={styles.btnDanger}>
+                        <Text style={styles.labelInput}>Search</Text>
+                        <TextInput style={styles.input} onChangeText={setPlate}></TextInput>
+                        {/* <Pressable onPress={() => navigation.navigate('ParkingList')} style={styles.btnDanger}>
                             <Text style={styles.labelText}>
                                 Remove
                             </Text>
-                        </Pressable>
-                        <Pressable onPress={() => navigation.navigate('ParkingList')} style={styles.btn}>
+                        </Pressable> */}
+                        <Pressable onPress={() => setPlate('')} style={styles.btn}>
                             <Text style={styles.labelText}>
                                 Select All
                             </Text>
@@ -52,23 +65,47 @@ const ParkingList = ({ navigation }) => {
                         </Pressable>
                     </View>
                 </View>
+            </View>
+            <View style={styles.secondContainer}>
                 <SectionList
-                    sections={DATA}
-                    keyExtractor={(item, index) => item + index}
-                    renderItem={renderItem} />
+                    sections={sections}
+                    keyExtractor={(item, index) => item.id}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <View style={styles.plateView}>
+                                <Text style={styles.description}>{item.licensePlate}</Text>
+                            </View>
+                            <View style={styles.itemInsideContainer}>
+                                <Text style={styles.name}>{item.ownerName}</Text>
+                                <Text style={styles.contact}>{item.ownerContact}</Text>
+                            </View>
+                        </View>
+                    )}
+                    renderSectionHeader={({ section }) => (
+                        <View>
+                            <Text style={styles.sectionHeader}>{section.title}</Text>
+                        </View>
+                    )}
+                />
             </View>
         </>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    secondContainer: {
+        flex: 1.5
+    },
     item: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 8,
-        justifyContent: 'flex-start',
-        width: '100%',
-        padding: 17,
+        padding: 20,
+        width: '90%',
+        justifyContent: 'space-between',
         shadowColor: '#171717',
         shadowOffset: { width: -8, height: 11 },
         shadowOpacity: 0.3,
@@ -79,7 +116,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 8,
     }, description: {
-        color: '#43c1c9',
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold',
+    }, plateView: {
+        width: 120,
+        alignItems: 'center',
+        marginHorizontal: 20,
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 20,
     },
     image: {
         width: 70,
@@ -92,13 +138,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-    header: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        backgroundColor: '#f2f2f2',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-    }, container: {
+    contact: {
+        marginTop: 10,
+        color: '#43c1c9',
+        fontSize: 15,
+    },
+    container: {
         flex: 1,
         alignItems: 'center',
         width: '100%',
@@ -142,6 +187,14 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 10,
         marginBottom: 13,
+    }, sectionHeader: {
+        alignItems: 'center',
+        width: '100%',
+        padding: 20,
+        backgroundColor: '#008080',
+        color: 'white',
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8
     }
 });
 

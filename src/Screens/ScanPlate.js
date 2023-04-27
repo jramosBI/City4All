@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Camera } from 'expo-camera';
+import * as SecureStore from 'expo-secure-store';
 
 export default function ScanPlate({ navigation }) {
     const [hasPermission, setHasPermission] = useState(null);
@@ -17,12 +18,27 @@ export default function ScanPlate({ navigation }) {
 
     const takePicture = async () => {
         if (camera) {
-            const photo = await camera.takePictureAsync();
+            const photo = await camera.takePictureAsync({ base64: true });
+            const token = await SecureStore.getItemAsync('token');
             setImageUri(photo.uri);
             setShowCamera(false);
             camera.pausePreview();
+            const apiUrl = 'https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Accesses/entry/auto';
+            const requestBody = {
+                b64Image: photo.base64,
+            };
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json-patch+json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(requestBody),
+            });
+            console.log(response);
         }
     };
+
 
     const resumePreview = () => {
         if (camera) {

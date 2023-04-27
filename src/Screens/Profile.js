@@ -1,8 +1,37 @@
 import { StyleSheet, Text, View, Pressable, Alert, TextInput, ScrollView, Image } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
+
+  const [userName, setUserName] = useState('');
+  const [name, setName] = useState('');
+
+  React.useEffect(() => {
+
+    async function retrieveToken() {
+      const nameValue = await SecureStore.getItemAsync('name');
+      const token = await SecureStore.getItemAsync('token');
+      fetch(`https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Users?search=${nameValue}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setUserName(json.value[0].username);
+          setName(json.value[0].name);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    retrieveToken();
+  }, []);
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -10,14 +39,14 @@ export default function Profile() {
           <Text style={styles.header}>Edit User Profile</Text>
           <View style={styles.cardContainer}>
             <Text style={styles.labelInput}>Name</Text>
-            <TextInput style={styles.input}></TextInput>
+            <TextInput style={styles.input}>{name}</TextInput>
             <Pressable onPress={() => Alert.alert('Name Changed With Success')} style={styles.btn}>
               <Text style={styles.labelText}>
                 <Ionicons name={'create-outline'} size={20} color={'white'} /> Change Name
               </Text>
             </Pressable>
             <Text style={styles.labelInput}>User</Text>
-            <TextInput style={styles.input}></TextInput>
+            <TextInput style={styles.input}>{userName}</TextInput>
             <Pressable onPress={() => Alert.alert('User Changed With Success')} style={styles.btn}>
               <Text style={styles.labelText}>
                 <Ionicons name={'create-outline'} size={20} color={'white'} /> Change User

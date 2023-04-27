@@ -1,70 +1,67 @@
-import React from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    SectionList,
-    StatusBar,
-} from 'react-native';
-import { Button } from 'react-native';
+import * as React from 'react';
+import { ActivityIndicator, Image, Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Button, Alert } from 'react-native'
 
-const DATA = [
-    {
-        title: 'Encomendas a Receber',
-        data: ['Description: Manual Order', 'User Name: Jhonnathan Ramos', 'Company Name: CTT', 'Input Code: #2625', 'Description: Fragile'],
-    }
-];
+export default function Home({ route }) {
+    const { orderName, orderDescription, shippingCompany } = route.params;
 
-const OrdersPerId = () => (
-    <SafeAreaView style={styles.container}>
-        <SectionList
-            sections={DATA}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-                <View style={styles.item}>
-                    <Text style={styles.title}>{item}</Text>
-                </View>
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-                <Text style={styles.header}>{title}</Text>
-            )}
-        />
-        <Button style={styles.floatigBtn}>
-            <Text>Teste</Text>
-        </Button>
-    </SafeAreaView>
-);
+    return (
+        <KeyboardAvoidingView style={styles.container}>
+            <TextInput
+                style={styles.input}
+                value={orderName}
+                placeholder="Email..."
+                keyboardType="email-address"
+                editable={false}
+            />
+            <TextInput
+                style={styles.input}
+                value={orderDescription}
+                placeholder="Password..."
+                keyboardType="default"
+                editable={false}
+            />
+            <TextInput
+                style={styles.input}
+                value={shippingCompany}
+                placeholder="Email..."
+                keyboardType="email-address"
+                editable={false}
+            />
+            <Pressable style={styles.btn}>
+                <Text style={styles.label}>Recive Order</Text>
+            </Pressable>
+        </KeyboardAvoidingView>
+    );
+}
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: StatusBar.currentHeight,
-        marginHorizontal: 100,
-        marginVertical: 10
-    },
-    item: {
-        backgroundColor: 'white',
-        padding: 5,
-        marginVertical: 5,
-        borderRadius: 10,
-    },
-    header: {
-        marginTop: 20,
-        fontSize: 20,
-        backgroundColor: '#43c1c9',
-        borderTopStartRadius: 10,
-        borderTopEndRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }, input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
         padding: 10,
+        borderRadius: 15,
+        width: '70%',
+        borderColor: '#43c1c9',
+    }, btn: {
+        width: '70%',
+        height: 40,
+        borderRadius: 15,
+        backgroundColor: '#43c1c9',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }, label: {
         color: 'white'
-    },
-    title: {
+    }, btnSignUpText: {
+        marginTop: 10,
+        color: '#43c1c9',
         fontSize: 15,
-    },
-    floatigBtn: {
-        position: 'fixed',
-
+    }, loading: {
+        padding: 20,
     }
-});
-
-export default OrdersPerId;
+})

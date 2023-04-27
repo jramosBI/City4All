@@ -9,6 +9,7 @@ import EntryManual from './src/Screens/EntryManual'
 import ParkingList from './src/Screens/ParkingList';
 import ScanPlate from './src/Screens/ScanPlate';
 import ValidateLogin from './src/Components/ValidateLogin'
+import OrderPerId from './src/Screens/OrderPerId'
 
 const Stack = createNativeStackNavigator();
 function App({ route }) {
@@ -27,6 +28,7 @@ function App({ route }) {
         <Stack.Screen name="ParkingList" options={{ title: 'Parking List' }} component={ParkingList} />
         <Stack.Screen name="AddOrder" options={{ title: 'Add New Order' }} component={AddOrder} />
         <Stack.Screen name="EntryManual" options={{ title: 'Entry Manual' }} component={EntryManual} />
+        <Stack.Screen name="OrderPerId" options={{ title: 'Order Per Id' }} component={OrderPerId} />
         <Stack.Screen name="ScanPlate" component={ScanPlate} />
       </Stack.Navigator>
     </NavigationContainer>

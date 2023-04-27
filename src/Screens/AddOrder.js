@@ -6,18 +6,20 @@ import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
 
 export default function AddOrder({ navigation }) {
-    const [deliveryStatus, setDeliveryStatus] = React.useState('0');
-    const [recipientId, setRecipientId] = React.useState('B257AC8B-70A4-4EF5-9E26-CDAA8634E031');
-    const [details, setDetails] = React.useState('2 embalagens');
-    const [description, setDescription] = React.useState('Raquete de Padel Teste');
-    const [shippingCode, setShippingCode] = React.useState('rrtt5674TESTE');
-    const [shippingCompany, setShippingCompany] = React.useState('DHL');
+    const [deliveryStatus, setDeliveryStatus] = React.useState('300001');
+    const [recipientId, setRecipientId] = React.useState('');
+    const [details, setDetails] = React.useState('');
+    const [description, setDescription] = React.useState('');
+    const [shippingCode, setShippingCode] = React.useState('');
+    const [shippingCompany, setShippingCompany] = React.useState('');
     const [message, setMessage] = useState('');
     const [token, setToken] = useState(null);
 
     useEffect(() => {
         const loadToken = async () => {
             const token = await SecureStore.getItemAsync('token');
+            const recipientId = await SecureStore.getItemAsync('userId');
+            setRecipientId(recipientId);
             setToken(token);
         };
         loadToken();
@@ -60,44 +62,30 @@ export default function AddOrder({ navigation }) {
         <KeyboardAvoidingView style={styles.container}>
             <TextInput
                 style={styles.input}
-                onChangeText={setDeliveryStatus}
-                value={deliveryStatus}
-                placeholder="Add your Name..."
-                keyboardType="default"
-            />
-            <TextInput
-                style={styles.input}
-                onChangeText={setRecipientId}
-                value={recipientId}
-                placeholder="Add your Name..."
-                keyboardType="default"
-            />
-            <TextInput
-                style={styles.input}
                 onChangeText={setDetails}
                 value={details}
-                placeholder="Add your Name..."
+                placeholder="Details..."
                 keyboardType="default"
             />
             <TextInput
                 style={styles.input}
                 onChangeText={setDescription}
                 value={description}
-                placeholder="Add your Name..."
+                placeholder="Description..."
                 keyboardType="default"
             />
             <TextInput
                 style={styles.input}
                 onChangeText={setShippingCode}
                 value={shippingCode}
-                placeholder="Add your Name..."
+                placeholder="Shipping Code..."
                 keyboardType="default"
             />
             <TextInput
                 style={styles.input}
                 onChangeText={setShippingCompany}
                 value={shippingCompany}
-                placeholder="Add your Name..."
+                placeholder="Shipping Company..."
                 keyboardType="default"
             />
             {message && (
