@@ -5,8 +5,8 @@ import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
 export default function Login({ navigation }) {
-    const [username, onChangeEmail] = useState('manelseg');
-    const [password, onChangePassword] = useState('123');
+    const [username, onChangeEmail] = useState('');
+    const [password, onChangePassword] = useState('');
     const [message, setMessage] = useState('');
     const [token, setToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -31,8 +31,6 @@ export default function Login({ navigation }) {
                     hash,
                 }),
             });
-
-            console.log(response.status);
 
             if (response.status !== 200) {
                 throw new Error('API error');
