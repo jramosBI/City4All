@@ -1,27 +1,28 @@
 import * as React from 'react';
-import { ActivityIndicator, Image, Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Button, Alert } from 'react-native'
+import { ActivityIndicator, Image, Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, useColorScheme } from 'react-native'
 
 export default function Home({ route }) {
     const { orderName, orderDescription, shippingCompany } = route.params;
+    const colorScheme = useColorScheme();
 
     return (
-        <KeyboardAvoidingView style={styles.container}>
+        <KeyboardAvoidingView style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 value={orderName}
                 placeholder="Email..."
                 keyboardType="email-address"
                 editable={false}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 value={orderDescription}
                 placeholder="Password..."
                 keyboardType="default"
                 editable={false}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 value={shippingCompany}
                 placeholder="Email..."
                 keyboardType="email-address"
@@ -63,5 +64,15 @@ const styles = StyleSheet.create({
         fontSize: 15,
     }, loading: {
         padding: 20,
+    },
+    lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
+    },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    }, darkInput: {
+        color: 'black'
+    }, lightInput: {
+        color: 'white'
     }
 })

@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         width: '70%',
         borderColor: '#43c1c9',
     }, darkInput: {
-        color: 'dark'
+        color: 'black'
     }, lightInput: {
         color: 'white'
     }, btn: {

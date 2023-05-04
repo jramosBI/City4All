@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as SecureStore from 'expo-secure-store';
+import { useColorScheme } from 'react-native';
 
 export default function ScanPlate({ navigation }) {
+    const colorScheme = useColorScheme();
     const [hasPermission, setHasPermission] = useState(null);
     const [camera, setCamera] = useState(null);
     const [imageUri, setImageUri] = useState(null);
@@ -62,7 +64,7 @@ export default function ScanPlate({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
             {!showCamera && (
                 <>
                     <TouchableOpacity style={styles.btn} onPress={() => navigation.goBack('')}>
@@ -140,5 +142,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }, btnText: {
         color: 'white'
-    }
+    }, lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
+    },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    },
 });

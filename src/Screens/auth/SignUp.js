@@ -1,22 +1,23 @@
 import * as React from 'react';
-import { Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, useColorScheme } from 'react-native'
 
 export default function SignUp({ navigation }) {
+    const colorScheme = useColorScheme();
     const [emailInput, onChangeEmail] = React.useState('');
     const [passwordInput, onChangePassword] = React.useState('');
     const [passwordValidationInput, onChangeValidationPassword] = React.useState('');
 
     return (
-        <KeyboardAvoidingView style={styles.container}>
+        <KeyboardAvoidingView style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={onChangeEmail}
                 value={emailInput}
                 placeholder="Email..."
                 keyboardType="email-address"
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={onChangePassword}
                 value={passwordInput}
                 placeholder="Password..."
@@ -24,7 +25,7 @@ export default function SignUp({ navigation }) {
                 secureTextEntry={true}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={onChangeValidationPassword}
                 value={passwordValidationInput}
                 placeholder="Password..."
@@ -67,5 +68,14 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: '#43c1c9',
         fontSize: 15,
+    }, lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
     },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    }, darkInput: {
+        color: 'black'
+    }, lightInput: {
+        color: 'white'
+    }
 })

@@ -2,8 +2,10 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, KeyboardAvo
 import React, { useState } from 'react';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { useColorScheme } from 'react-native';
 
 export default function EntryManual({ navigation }) {
+    const colorScheme = useColorScheme();
     let json;
     const [licensePlate, setLicensePlate] = useState('');
     const [ownerContact, setOwnerContact] = useState('');
@@ -44,14 +46,14 @@ export default function EntryManual({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={[styles.card, styles.shadowProp]}>
+        <View style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
+            <View style={[styles.card, styles.shadowProp, colorScheme === 'light' ? styles.lightCard : styles.darkCard]}>
                 <Text style={styles.header}>Entry</Text>
                 <View style={styles.cardContainer}>
-                    <Text style={styles.labelInput}>License Plate</Text>
-                    <TextInput onChangeText={text => setLicensePlate(text)} style={styles.input}></TextInput>
-                    <Text style={styles.labelInput}>Contact</Text>
-                    <TextInput onChangeText={text => setOwnerContact(text)} style={styles.input}></TextInput>
+                    <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>License Plate</Text>
+                    <TextInput onChangeText={text => setLicensePlate(text)} style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}></TextInput>
+                    <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>Contact</Text>
+                    <TextInput onChangeText={text => setOwnerContact(text)} style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}></TextInput>
                     <Pressable onPress={handleSubmit} style={styles.btn}>
                         <Text style={styles.labelText}>
                             Entry License Plate
@@ -113,5 +115,20 @@ const styles = StyleSheet.create({
     }, labelInput: {
         marginBottom: 5,
         fontWeight: 'bold'
-    }
+    }, lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
+    },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    }, darkCard: {
+        backgroundColor: '#181818',
+    },
+    lightCard: {
+        backgroundColor: '#EFEFEF',
+    }, lightInput: {
+        color: 'white',
+    },
+    darkInput: {
+        color: 'black',
+    },
 });

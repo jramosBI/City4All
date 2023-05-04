@@ -10,28 +10,41 @@ import ParkingList from './src/Screens/ParkingList';
 import ScanPlate from './src/Screens/ScanPlate';
 import ValidateLogin from './src/Components/ValidateLogin'
 import OrderPerId from './src/Screens/OrderPerId'
+import { useColorScheme } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 function App({ route }) {
-
+  const colorScheme = useColorScheme()
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator
+        initialRouteName='Login'
+        screenOptions={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: colorScheme === 'light' ? 'white' : 'black',
+          },
+          headerTitleStyle: {
+            color: colorScheme === 'light' ? 'black' : 'white',
+          }
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={RootTabNavigator}
           options={{
             headerShown: false,
-            headerStyle: {
-              backgroundColor: 'black',
-            },
           }}
         />
         <Stack.Screen name="ValidateLogin" component={ValidateLogin} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="ParkingList" options={{ title: 'Parking List' }} component={ParkingList} />
-        <Stack.Screen name="AddOrder" options={{ title: 'Add New Order' }} component={AddOrder} />
+        <Stack.Screen name="AddOrder"
+          options={{
+            title: 'Add New Order',
+          }}
+          component={AddOrder} />
         <Stack.Screen name="EntryManual" options={{ title: 'Entry Manual' }} component={EntryManual} />
         <Stack.Screen name="OrderPerId" options={{ title: 'Order Per Id' }} component={OrderPerId} />
         <Stack.Screen name="ScanPlate" component={ScanPlate} />

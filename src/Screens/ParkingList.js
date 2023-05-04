@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { View, Text, SectionList, Image, StyleSheet, Pressable, TextInput, VirtualizedList } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { useColorScheme } from 'react-native'
 
 const ParkingList = ({ navigation }) => {
     const [sections, setSections] = useState([]);
     const [plate, setPlate] = useState('');
+    const colorScheme = useColorScheme();
 
     React.useEffect(() => {
         async function retrieveToken() {
@@ -42,12 +44,13 @@ const ParkingList = ({ navigation }) => {
 
     return (
         <>
-            <View style={styles.container}>
-                <View style={[styles.card, styles.shadowProp]}>
+            <View style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
+                <View style={[styles.card, styles.shadowProp, colorScheme === 'light' ? styles.lightCard : styles.darkCard]}>
                     <Text style={styles.header}>List</Text>
                     <View style={styles.cardContainer}>
-                        <Text style={styles.labelInput}>Search</Text>
-                        <TextInput style={styles.input} onChangeText={setPlate}></TextInput>
+                        <Text style={[styles.labelInput, , colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>Search</Text>
+                        <TextInput style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
+                            onChangeText={setPlate}></TextInput>
                         {/* <Pressable onPress={() => navigation.navigate('ParkingList')} style={styles.btnDanger}>
                             <Text style={styles.labelText}>
                                 Remove
@@ -66,7 +69,7 @@ const ParkingList = ({ navigation }) => {
                     </View>
                 </View>
             </View>
-            <View style={styles.secondContainer}>
+            <View style={[styles.secondContainer, styles.shadowProp, colorScheme === 'light' ? styles.lightCard : styles.darkCard]}>
                 <SectionList
                     sections={sections}
                     keyExtractor={(item, index) => item.id}
@@ -76,7 +79,7 @@ const ParkingList = ({ navigation }) => {
                                 <Text style={styles.description}>{item.licensePlate}</Text>
                             </View>
                             <View style={styles.itemInsideContainer}>
-                                <Text style={styles.name}>{item.ownerName}</Text>
+                                <Text style={colorScheme === 'light' ? styles.darkName : styles.lightName}>{item.ownerName}</Text>
                                 <Text style={styles.contact}>{item.ownerContact}</Text>
                             </View>
                         </View>
@@ -134,8 +137,14 @@ const styles = StyleSheet.create({
         borderRadius: '50%',
         resizeMode: 'contain',
     },
-    name: {
+    lightName: {
         fontSize: 20,
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    darkName: {
+        fontSize: 20,
+        color: 'black',
         fontWeight: 'bold',
     },
     contact: {
@@ -195,6 +204,25 @@ const styles = StyleSheet.create({
         color: 'white',
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8
+    }, lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
+    },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    }, darkCard: {
+        backgroundColor: '#181818',
+    },
+    lightCard: {
+        backgroundColor: '#EFEFEF',
+    }, lightInput: {
+        color: 'white',
+    },
+    darkInput: {
+        color: 'black',
+    }, darkInput: {
+        color: 'black'
+    }, lightInput: {
+        color: 'white'
     }
 });
 
