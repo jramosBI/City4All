@@ -6,11 +6,13 @@ import Profile from '../src/Screens/Profile'
 import Parking from '../src/Screens/Parking'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as SecureStore from 'expo-secure-store';
+import { useColorScheme } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
     const [userName, setUserName] = React.useState('');
+    const colorScheme = useColorScheme();
 
     React.useEffect(() => {
 
@@ -60,7 +62,17 @@ export default function App() {
                 },
                 tabBarActiveTintColor: '#43c1c9',
                 tabBarInactiveTintColor: '#43c1c9',
-            })}>
+                tabBarStyle: {
+                    backgroundColor: colorScheme === 'light' ? 'white' : 'black',
+                },
+                headerStyle: {
+                    backgroundColor: colorScheme === 'light' ? 'white' : 'black', // replace with your desired color
+                },
+                headerTitleStyle: {
+                    color: colorScheme === 'light' ? 'black' : 'white',
+                },
+            })}
+        >
             <Tab.Screen name="HomeScreen" options={{ title: "Home" }} component={Home} />
             <Tab.Screen name="Orders" component={Orders} />
             <Tab.Screen name="Parking" component={Parking} />

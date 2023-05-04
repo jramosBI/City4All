@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffectr } from 'react';
 import { ActivityIndicator, Image, Text, TextInput, Pressable, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Button, Alert } from 'react-native'
 import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { useColorScheme } from 'react-native';
 
 export default function Login({ navigation }) {
-    const [username, onChangeEmail] = useState('');
-    const [password, onChangePassword] = useState('');
+    const colorScheme = useColorScheme();
+    const [username, onChangeEmail] = useState('manelseg');
+    const [password, onChangePassword] = useState('123');
     const [message, setMessage] = useState('');
     const [token, setToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,7 @@ export default function Login({ navigation }) {
         await SecureStore.setItemAsync(key, value);
         navigation.navigate('Home')
     }
+
     async function handleSubmit() {
         setIsLoading(true);
         let json;
@@ -50,25 +52,22 @@ export default function Login({ navigation }) {
         }
     }
 
-
-
-
     return (
-        <KeyboardAvoidingView style={styles.container}>
+        <KeyboardAvoidingView style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
             <Image
                 style={{ width: '90%', height: '20%' }}
                 resizeMode={'contain'}
-                source={require('../../../assets/src/img/logo_inv.png')}
+                source={colorScheme === 'light' ? require('../../../assets/src/img/dark_logo.png') : require('../../../assets/src/img/light_logo.png')}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={onChangeEmail}
                 value={username}
                 placeholder="Username..."
                 keyboardType="email-address"
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={onChangePassword}
                 value={password}
                 placeholder="Password..."
@@ -104,6 +103,10 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         width: '70%',
         borderColor: '#43c1c9',
+    }, darkInput: {
+        color: 'dark'
+    }, lightInput: {
+        color: 'white'
     }, btn: {
         width: '70%',
         height: 40,
@@ -123,5 +126,10 @@ const styles = StyleSheet.create({
         color: 'red',
         margin: 15,
         fontSize: 15,
-    }
+    }, lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
+    },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    },
 })

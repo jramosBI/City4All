@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, Pressable, Alert, TextInput, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Alert, TextInput, ScrollView, Image, useColorScheme } from 'react-native';
 import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
-
+  const colorScheme = useColorScheme();
   const [userName, setUserName] = useState('');
   const [name, setName] = useState('');
 
@@ -33,37 +33,37 @@ export default function Profile() {
     retrieveToken();
   }, []);
   return (
-    <ScrollView>
+    <ScrollView style={[colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
       <View style={styles.container}>
-        <View style={[styles.card, styles.shadowProp]}>
+        <View style={[styles.card, styles.shadowProp, colorScheme === 'light' ? styles.lightCard : styles.darkCard]}>
           <Text style={styles.header}>Edit User Profile</Text>
           <View style={styles.cardContainer}>
-            <Text style={styles.labelInput}>Name</Text>
-            <TextInput style={styles.input}>{name}</TextInput>
+            <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>Name</Text>
+            <TextInput style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>{name}</TextInput>
             <Pressable onPress={() => Alert.alert('Name Changed With Success')} style={styles.btn}>
               <Text style={styles.labelText}>
                 <Ionicons name={'create-outline'} size={20} color={'white'} /> Change Name
               </Text>
             </Pressable>
-            <Text style={styles.labelInput}>User</Text>
-            <TextInput style={styles.input}>{userName}</TextInput>
+            <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>User</Text>
+            <TextInput style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>{userName}</TextInput>
             <Pressable onPress={() => Alert.alert('User Changed With Success')} style={styles.btn}>
               <Text style={styles.labelText}>
                 <Ionicons name={'create-outline'} size={20} color={'white'} /> Change User
               </Text>
             </Pressable>
-            <Text style={styles.labelInput}>Old Password</Text>
-            <TextInput style={styles.input}></TextInput>
-            <Text style={styles.labelInput}>New Password</Text>
-            <TextInput style={styles.input}></TextInput>
-            <Text style={styles.labelInput}>Confirm Password</Text>
-            <TextInput style={styles.input}></TextInput>
+            <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>Old Password</Text>
+            <TextInput style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}></TextInput>
+            <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>New Password</Text>
+            <TextInput style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}></TextInput>
+            <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>Confirm Password</Text>
+            <TextInput style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}></TextInput>
             <Pressable onPress={() => Alert.alert('Password Changed With Success')} style={styles.btn}>
               <Text style={styles.labelText}>
                 <Ionicons name={'create-outline'} size={20} color={'white'} /> Change Password
               </Text>
             </Pressable>
-            <Text style={styles.labelInput}>Profile Photo</Text>
+            <Text style={[styles.labelInput, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}>Profile Photo</Text>
             <Image
               style={styles.imgInput}
               source={require('../../assets/src/img/user.jpg')}
@@ -129,5 +129,23 @@ const styles = StyleSheet.create({
     borderColor: '#43c1c9',
   }, imgInput: {
     width: 100,
-  }
+  },
+  lightMode: {
+    backgroundColor: '#EFEFEF', // white background for light mode
+    color: 'black'
+  },
+  darkMode: {
+    backgroundColor: '#000000', // black background for dark mode
+    color: 'white'
+  }, darkCard: {
+    backgroundColor: '#181818',
+  },
+  lightCard: {
+    backgroundColor: '#EFEFEF',
+  }, lightInput: {
+    color: 'white',
+  },
+  darkInput: {
+    color: 'black',
+  },
 });

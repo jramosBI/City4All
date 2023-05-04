@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity, useColorScheme } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-
 const Order = ({ navigation }) => {
   const [deliveries, setDeliveries] = useState([]);
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +69,7 @@ const Order = ({ navigation }) => {
       <TouchableOpacity style={styles.item} onPress={navigateToOrder}>
         <Image style={styles.image} source={item.image} />
         <View style={styles.itemInsideContainer}>
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={[colorScheme === 'light' ? styles.lightMode : styles.darkMode, styles.name]}>{item.name}</Text>
           <Text style={styles.description}>{item.description}</Text>
         </View>
       </TouchableOpacity>
@@ -79,7 +79,7 @@ const Order = ({ navigation }) => {
 
   const renderSectionHeader = ({ section }) => {
     return (
-      <Text style={styles.header}>{section.title}</Text>
+      <Text style={[colorScheme === 'light' ? styles.lightMode : styles.darkMode, styles.header]}>{section.title}</Text>
     );
   };
 
@@ -88,7 +88,7 @@ const Order = ({ navigation }) => {
   };
 
   return (
-    <View>
+    <View style={colorScheme === 'light' ? styles.lightMode : styles.darkMode}>
       <SectionList
         sections={groupDeliveries()}
         keyExtractor={(item, index) => item + index}
@@ -111,10 +111,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
     padding: 17,
-    shadowColor: '#171717',
-    shadowOffset: { width: -8, height: 11 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
+    // shadowColor: '#171717',
+    // shadowOffset: { width: -8, height: 11 },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 10,
   },
   itemInsideContainer: {
     flexDirection: 'column',
@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     padding: 30,
     fontSize: 18,
     fontWeight: 'bold',
-    backgroundColor: '#f2f2f2',
     paddingVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -164,7 +163,13 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 30,
     color: 'white',
-  },
+  }, lightMode: {
+    backgroundColor: '#EFEFEF',
+    color: 'black',
+  }, darkMode: {
+    backgroundColor: 'black',
+    color: 'white',
+  }
 });
 
 export default Order;

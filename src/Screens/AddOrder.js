@@ -1,11 +1,12 @@
 import { Text } from 'react-native'
 import React, { useState, useEffect } from 'react';
-import { KeyboardAvoidingView, TextInput, StyleSheet, Pressable } from 'react-native';
+import { KeyboardAvoidingView, TextInput, StyleSheet, Pressable, useColorScheme } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
 
 export default function AddOrder({ navigation }) {
+    const colorScheme = useColorScheme();
     const [deliveryStatus, setDeliveryStatus] = React.useState('300001');
     const [recipientId, setRecipientId] = React.useState('');
     const [details, setDetails] = React.useState('');
@@ -59,30 +60,30 @@ export default function AddOrder({ navigation }) {
         }
     }
     return (
-        <KeyboardAvoidingView style={styles.container}>
+        <KeyboardAvoidingView style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={setDetails}
                 value={details}
                 placeholder="Details..."
                 keyboardType="default"
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={setDescription}
                 value={description}
                 placeholder="Description..."
                 keyboardType="default"
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={setShippingCode}
                 value={shippingCode}
                 placeholder="Shipping Code..."
                 keyboardType="default"
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, colorScheme === 'light' ? styles.darkInput : styles.lightInput]}
                 onChangeText={setShippingCompany}
                 value={shippingCompany}
                 placeholder="Shipping Company..."
@@ -125,4 +126,14 @@ const styles = StyleSheet.create({
         color: '#43c1c9',
         fontSize: 15,
     },
+    lightMode: {
+        backgroundColor: '#EFEFEF', // white background for light mode
+    },
+    darkMode: {
+        backgroundColor: '#000000', // black background for dark mode
+    }, darkInput: {
+        color: 'dark'
+    }, lightInput: {
+        color: 'white'
+    }
 })

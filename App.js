@@ -13,14 +13,19 @@ import OrderPerId from './src/Screens/OrderPerId'
 
 const Stack = createNativeStackNavigator();
 function App({ route }) {
-  
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen
           name="Home"
           component={RootTabNavigator}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: 'black',
+            },
+          }}
         />
         <Stack.Screen name="ValidateLogin" component={ValidateLogin} />
         <Stack.Screen name="Login" component={Login} />

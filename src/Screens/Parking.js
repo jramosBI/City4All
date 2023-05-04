@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, ScrollView, Pressable, useColorScheme } from 'react-native';
 import React, { useState } from 'react';
 
 export default function Parking({ navigation }) {
+  const colorScheme = useColorScheme();
   return (
-    <View style={styles.container}>
-      <View style={[styles.card, styles.shadowProp]}>
+    <View style={[styles.container, colorScheme === 'light' ? styles.lightMode : styles.darkMode]}>
+      <View style={[styles.card, styles.shadowProp, colorScheme === 'light' ? styles.lightCard : styles.darkCard]}>
         <Text style={styles.header}>Entry</Text>
         <View style={styles.cardContainer}>
           <Pressable onPress={() => navigation.navigate('ScanPlate')} style={styles.btn}>
@@ -19,7 +20,7 @@ export default function Parking({ navigation }) {
           </Pressable>
         </View>
       </View>
-      <View style={[styles.card, styles.shadowProp]}>
+      <View style={[styles.card, styles.shadowProp, colorScheme === 'light' ? styles.lightCard : styles.darkCard]}>
         <Text style={styles.header}>List</Text>
         <View style={styles.cardContainer}>
           <Pressable onPress={() => navigation.navigate('ParkingList')} style={styles.btn}>
@@ -55,7 +56,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   card: {
-    backgroundColor: 'white',
     borderRadius: 8,
     paddingVertical: 0,
     paddingHorizontal: 0,
@@ -67,5 +67,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+  }, darkCard: {
+    backgroundColor: '#181818',
+  },
+  lightCard: {
+    backgroundColor: '#EFEFEF',
+  },
+  lightMode: {
+    backgroundColor: '#EFEFEF', // white background for light mode
+  },
+  darkMode: {
+    backgroundColor: '#000000', // black background for dark mode
   },
 });
