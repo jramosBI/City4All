@@ -10,6 +10,7 @@ export default function ScanPlate({ navigation }) {
     const [camera, setCamera] = useState(null);
     const [imageUri, setImageUri] = useState(null);
     const [showCamera, setShowCamera] = useState(true);
+    const [licensePlate, setLicensePlate] = useState("");
 
     useEffect(() => {
         (async () => {
@@ -25,19 +26,24 @@ export default function ScanPlate({ navigation }) {
             setImageUri(photo.uri);
             setShowCamera(false);
             camera.pausePreview();
-            const apiUrl = 'https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Accesses/entry/auto';
-            const requestBody = {
-                b64Image: photo.base64,
-            };
-            const response = await fetch(apiUrl, {
+            fetch('https://app-city4all-qa-westeurope-002.azurewebsites.net/api/Accesses/entry/auto', {
                 method: 'POST',
                 headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json-patch+json',
-                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(requestBody),
-            });
-            console.log(response);
+                body: JSON.stringify({
+                    b64Image: photo.base64,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    setLicensePlate(data.value.licensePlate);
+                })
+                .catch(error => {
+                    console.error(error); // Handle the error
+                });
         }
     };
 
@@ -88,6 +94,7 @@ export default function ScanPlate({ navigation }) {
                     <Image source={{ uri: imageUri }} style={styles.image} />
                 </TouchableOpacity>
             )}
+            <Text style={styles.text}>{licensePlate}</Text>
         </View>
     );
 }
@@ -147,5 +154,9 @@ const styles = StyleSheet.create({
     },
     darkMode: {
         backgroundColor: '#000000', // black background for dark mode
-    },
+    }, text: {
+        color: "white",
+        fontSize: 26,
+        fontWeight: "bold"
+    }
 });
